@@ -25,10 +25,14 @@ jobs:
         run: |
           curl -sSL -o adrules_domainset.txt https://raw.githubusercontent.com/Cats-Team/AdRules/main/adrules_domainset.txt
 
+      - name: Install tzdata
+        run: sudo apt-get update && sudo apt-get install -y tzdata
+
       - name: Convert to IPv4 + IPv6 hosts format
         run: |
-          echo "# Update: $(date -u -d '+8 hour' '+%Y-%m-%d %H:%M:%S (GMT+8)')" > hosts.txt
+          echo "# Update: $(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M:%S (GMT+8)')" > hosts.txt
           python3 scripts/convert_to_hosts.py adrules_domainset.txt >> hosts.txt
+      
 
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
