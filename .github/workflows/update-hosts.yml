@@ -2,18 +2,18 @@ name: Convert Clash Rules to Hosts
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天 UTC 0 点自动运行
-  workflow_dispatch:     # 支持手动运行
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 permissions:
-  contents: write  # 关键：启用写权限
+  contents: write  # ⬅️ 这行是关键！
 
 jobs:
   update-hosts:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -21,19 +21,14 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Download upstream clash rules
-        run: |
-          curl -sSL -o adrules_domainset.txt https://raw.githubusercontent.com/Cats-Team/AdRules/main/adrules_domainset.txt
+      - name: Download adrules
+        run: curl -sSL -o adrules.txt https://raw.githubusercontent.com/Cats-Team/AdRules/main/adrules_domainset.txt
 
-      - name: Convert to IPv4 + IPv6 hosts format
-        run: |
-          echo "# Update: $(date -u -d '8 hour' '+%Y-%m-%d %H:%M:%S (GMT+8)')" > hosts.txt
-          python3 scripts/convert_to_hosts.py adrules_domainset.txt >> hosts.txt
-      
-      
+      - name: Convert to hosts
+        run: python3 scripts/convert_to_hosts.py adrules.txt hosts.txt
 
-      - name: Commit and push changes
+      - name: Commit & Push
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "daily: update hosts.txt from adrules_domainset"
+          commit_message: "daily: update hosts.txt"
           file_pattern: hosts.txt
