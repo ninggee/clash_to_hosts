@@ -27,7 +27,7 @@ jobs:
 
       - name: Convert to IPv4 + IPv6 hosts format
         run: |
-          echo "# Update: $(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M:%S (GMT+8)')" > hosts.txt
+          echo "# Update: $(date -u -d '+8 hour' '+%Y-%m-%d %H:%M:%S (GMT+8)')" > hosts.txt
           python3 scripts/convert_to_hosts.py adrules_domainset.txt >> hosts.txt
 
       - name: Commit and push changes
