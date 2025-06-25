@@ -1,5 +1,5 @@
 import sys
-import datetime
+from datetime import datetime, timedelta, timezone
 
 def convert(input_path, output_path):
     with open(input_path, 'r', encoding='utf-8') as f:
@@ -13,12 +13,18 @@ def convert(input_path, output_path):
             if domain:
                 domains.add(domain)
 
-    now = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
+    domains = sorted(domains)
+    count = len(domains)
+
+    # 获取北京时间（UTC+8）
+    now = datetime.now(timezone.utc) + timedelta(hours=8)
     update_time = now.strftime("# Update: %Y-%m-%d %H:%M:%S (GMT+8)")
+    stat_line = f"# Total domains: {count}"
 
     with open(output_path, 'w', encoding='utf-8') as out:
         out.write(update_time + '\n')
-        for domain in sorted(domains):
+        out.write(stat_line + '\n\n')
+        for domain in domains:
             out.write(f"127.0.0.1 {domain}\n")
             out.write(f"::1 {domain}\n")
 
