@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write  # ⬅️ 这行是关键！
+  contents: write
 
 jobs:
   update-hosts:
@@ -21,11 +21,11 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Download adrules
-        run: curl -sSL -o adrules.txt https://raw.githubusercontent.com/Cats-Team/AdRules/main/adrules_domainset.txt
+      - name: Install dependencies
+        run: pip install requests
 
       - name: Convert to hosts
-        run: python3 scripts/convert_to_hosts.py adrules.txt hosts.txt
+        run: python3 scripts/convert_to_hosts.py sources.txt hosts.txt
 
       - name: Commit & Push
         uses: stefanzweifel/git-auto-commit-action@v5
